@@ -4,7 +4,7 @@
 
 ### Sistema de Gestão Turística Inteligente
 
-[![CI/CD Pipeline](https://github.com/joaogehlen/Turistar-Sul/actions/workflows/ci.yml/badge.svg)](https://github.com/joaogehlen/Turistar-Sul/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/joaogehlen/Turistar-Sul/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/joaogehlen/Turistar-Sul/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![NestJS](https://img.shields.io/badge/NestJS-10.3-E0234E?logo=nestjs)](https://nestjs.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js)](https://nextjs.org/)
@@ -280,8 +280,11 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 | [🤝 Contributing](CONTRIBUTING.md) | Como contribuir |
 | [🔒 Security](SECURITY.md) | Política de segurança |
 | [📝 Changelog](CHANGELOG.md) | Histórico de mudanças |
+| [🗺️ Roadmap](ROADMAP.md) | Planejamento futuro |
 
 ## 🎯 Roadmap
+
+> 📋 Veja nosso [roadmap completo](ROADMAP.md) para detalhes sobre o planejamento futuro do projeto.
 
 ### ✅ Concluído
 - Sistema de autenticação com JWT

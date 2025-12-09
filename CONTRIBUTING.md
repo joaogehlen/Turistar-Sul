@@ -46,7 +46,7 @@ Se você tem uma ideia para melhorar o projeto:
    ```bash
    git push origin feature/minha-feature
    ```
-7. **Abra um Pull Request** na branch `main`
+7. **Abra um Pull Request** na branch `master`
 
 #### Padrões de Commit
 

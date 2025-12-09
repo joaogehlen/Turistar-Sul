@@ -1,6 +1,9 @@
-# 🌴 Turistar Sul - Índice de Documentação
+# 📚 Turistar Sul - Índice de Documentação
 
 > Sistema completo de gestão turística com autenticação multi-role, sistema de aprovação e relatórios integrados ao Notion.
+
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/joaogehlen/Turistar-Sul)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
@@ -9,43 +12,80 @@
 **Primeira vez aqui?** Siga este caminho:
 
 ```
-1️⃣ Leia:    NAVIGATION_GUIDE.md  ← COMECE AQUI
-2️⃣ Instale: Execute setup.ps1
-3️⃣ Teste:   Siga QUICK_START.md
-4️⃣ Use:     Consulte API_DOCS.md
+1️⃣ Visão Geral:  README.md           ← COMECE AQUI
+2️⃣ Instalação:   QUICK_START.md      ← Instalar projeto
+3️⃣ Uso:          API_EXAMPLES.md     ← Usar a API
+4️⃣ Deploy:       DEPLOYMENT.md       ← Publicar online
 ```
 
 ---
 
-## 📚 Documentação Completa
+## 📖 Documentação por Categoria
 
 ### 🎯 Essenciais (Leia Primeiro)
 
-| Documento | Descrição | Tempo |
-|-----------|-----------|-------|
-| **[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md)** | 🗺️ Como navegar no projeto | 3 min |
-| **[SUMMARY.md](SUMMARY.md)** | 📋 Resumo executivo completo | 3 min |
-| **[QUICK_START.md](QUICK_START.md)** | ⚡ Instalação e primeiros passos | 5 min |
+| Documento | Descrição | Tempo | Prioridade |
+|-----------|-----------|-------|------------|
+| **[README.md](README.md)** | 📄 Visão geral e instalação | 5 min | ⭐⭐⭐⭐⭐ |
+| **[QUICK_START.md](QUICK_START.md)** | ⚡ Guia de início rápido | 5 min | ⭐⭐⭐⭐⭐ |
+| **[FAQ.md](FAQ.md)** | ❓ Perguntas frequentes | 3 min | ⭐⭐⭐⭐ |
+| **[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md)** | 🗺️ Como navegar no projeto | 3 min | ⭐⭐⭐ |
 
-### 📖 Referência
+### 🔌 API & Desenvolvimento
+
+| Documento | Descrição | Para quem? |
+|-----------|-----------|------------|
+| **[API_DOCS.md](API_DOCS.md)** | 🔌 Documentação completa da API | Desenvolvedores |
+| **[API_EXAMPLES.md](API_EXAMPLES.md)** | 💡 Exemplos práticos de uso | Desenvolvedores |
+| **[TESTING_GUIDE.md](TESTING_GUIDE.md)** | 🧪 Guia de testes | Desenvolvedores |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🏗️ Arquitetura e tecnologias | Arquitetos |
+
+### 🏗️ Estrutura & Arquitetura
 
 | Documento | Descrição | Quando Usar |
 |-----------|-----------|-------------|
-| **[README.md](README.md)** | 📄 Documentação principal | Visão geral |
-| **[API_DOCS.md](API_DOCS.md)** | 🔌 Todos os endpoints | Desenvolver com API |
-| **[TESTING_GUIDE.md](TESTING_GUIDE.md)** | 🧪 Como testar | Validar funcionalidades |
-| **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** | 🏗️ Arquitetura detalhada | Entender código |
-| **[NOTION_SETUP.md](NOTION_SETUP.md)** | 🔔 Configurar Notion | Integração Notion |
-| **[NOTION_INTEGRATION.md](NOTION_INTEGRATION.md)** | ✨ Como funciona Notion | Ver sincronização |
+| **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)** | 📂 Estrutura de pastas | Entender organização |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | 🎯 Padrões e decisões técnicas | Design de sistema |
+| **[SUMMARY.md](SUMMARY.md)** | 📋 Resumo executivo | Visão executiva |
 
-### 🛠️ Técnico
+### 🔔 Integrações
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `backend/prisma/schema.prisma` | 💾 Modelo do banco |
-| `backend/src/app.module.ts` | 📦 Módulos do sistema |
-| `docker-compose.yml` | 🐳 Configuração Docker |
-| `setup.ps1` | 🔧 Script de instalação |
+| Documento | Descrição | Quando Usar |
+|-----------|-----------|-------------|
+| **[NOTION_SETUP.md](NOTION_SETUP.md)** | 🔔 Configurar integração | Setup inicial |
+| **[NOTION_INTEGRATION.md](NOTION_INTEGRATION.md)** | ✨ Como funciona | Entender sincronização |
+
+### 🚀 Deploy & Produção
+
+| Documento | Descrição | Quando Usar |
+|-----------|-----------|-------------|
+| **[DEPLOYMENT.md](DEPLOYMENT.md)** | 🚀 Guias de deploy | Publicar online |
+| **[SECURITY.md](SECURITY.md)** | 🔒 Segurança e vulnerabilidades | Sempre |
+
+### 🤝 Comunidade
+
+| Documento | Descrição | Para quem? |
+|-----------|-----------|------------|
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | 🤝 Como contribuir | Contribuidores |
+| **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** | 📜 Código de conduta | Todos |
+| **[CHANGELOG.md](CHANGELOG.md)** | 📝 Histórico de mudanças | Todos |
+| **[LICENSE](LICENSE)** | ⚖️ Licença MIT | Legal |
+
+### 📸 Recursos Visuais
+
+| Documento | Descrição |
+|-----------|-----------|
+| **[SCREENSHOTS.md](SCREENSHOTS.md)** | 📸 Capturas de tela da aplicação |
+
+### 🛠️ Arquivos Técnicos
+
+| Arquivo | Descrição | Localização |
+|---------|-----------|-------------|
+| `schema.prisma` | 💾 Schema do banco de dados | `backend/prisma/` |
+| `app.module.ts` | 📦 Módulo principal | `backend/src/` |
+| `docker-compose.yml` | 🐳 Configuração Docker | Raiz |
+| `setup.ps1` | 🔧 Script de instalação | Raiz |
+| `package.json` | 📦 Dependências | `backend/` e `frontend/` |
 
 ---
 
