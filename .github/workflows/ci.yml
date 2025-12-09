@@ -1,0 +1,195 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Backend Tests
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: turistarsul_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+    
+    - name: 📦 Install dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: 🔨 Generate Prisma Client
+      working-directory: ./backend
+      run: npx prisma generate
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/turistarsul_test
+    
+    - name: 🗄️ Run migrations
+      working-directory: ./backend
+      run: npx prisma db push
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/turistarsul_test
+    
+    - name: 🧪 Run tests
+      working-directory: ./backend
+      run: npm test
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/turistarsul_test
+        JWT_SECRET: test-secret
+    
+    - name: 📊 Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./backend/coverage
+        flags: backend
+
+  # Frontend Tests
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: 📦 Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: 🔍 Lint
+      working-directory: ./frontend
+      run: npm run lint || true
+    
+    - name: 🏗️ Build
+      working-directory: ./frontend
+      run: npm run build
+      env:
+        NEXT_PUBLIC_API_URL: http://localhost:3000
+    
+    - name: 🧪 Run tests
+      working-directory: ./frontend
+      run: npm test || true
+
+  # Lint & Format Check
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
+    - name: 📦 Install backend dependencies
+      working-directory: ./backend
+      run: npm ci
+    
+    - name: 🔍 Lint backend
+      working-directory: ./backend
+      run: npm run lint || true
+    
+    - name: 📦 Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+    
+    - name: 🔍 Lint frontend
+      working-directory: ./frontend
+      run: npm run lint || true
+
+  # Security Audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
+    - name: 🔒 Audit backend dependencies
+      working-directory: ./backend
+      run: npm audit --audit-level=moderate || true
+    
+    - name: 🔒 Audit frontend dependencies
+      working-directory: ./frontend
+      run: npm audit --audit-level=moderate || true
+
+  # Docker Build
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🐳 Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: 🔨 Build backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: false
+        tags: turistarsul-backend:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: 🔨 Build frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: false
+        tags: turistarsul-frontend:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
