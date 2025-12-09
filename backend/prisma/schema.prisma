@@ -1,0 +1,238 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ROLES E STATUS
+// ==========================================
+
+enum Role {
+  ADMIN
+  TOURIST_POINT      // Gerencia pontos turísticos
+  RESTAURANT         // Gerencia restaurantes
+  ACCOMMODATION      // Gerencia hospedagens
+  PREFECTURE         // Prefeitura - apenas relatórios
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  PENDING_APPROVAL
+}
+
+// ==========================================
+// USUÁRIOS
+// ==========================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  
+  role      Role     @default(TOURIST_POINT)
+  
+  // Dados específicos
+  cpf       String?
+  cnpj      String?
+  city      String?  // Para PREFECTURE
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacionamentos
+  touristPoints     TouristPoint[]
+  restaurants       Restaurant[]
+  accommodations    Accommodation[]
+  registrationRequests RegistrationRequest[]
+  
+  @@map("users")
+}
+
+// ==========================================
+// SISTEMA DE APROVAÇÃO
+// ==========================================
+
+model RegistrationRequest {
+  id          String          @id @default(uuid())
+  userId      String
+  entityType  String          // 'TOURIST_POINT' | 'RESTAURANT' | 'ACCOMMODATION'
+  entityId    String?         // ID da entidade criada
+  status      ApprovalStatus  @default(PENDING)
+  
+  // Dados da solicitação
+  requestData Json            // Dados completos enviados
+  
+  // Resposta do admin
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  rejectionReason String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("registration_requests")
+}
+
+// ==========================================
+// PONTOS TURÍSTICOS
+// ==========================================
+
+model TouristPoint {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  
+  // Localização
+  address     String
+  city        String
+  state       String
+  latitude    Float?
+  longitude   Float?
+  
+  // Informações básicas
+  category    String?       // "Praia", "Museu", "Parque", etc
+  openingHours String?
+  entryFee    String?       // "Grátis", "R$ 10", etc
+  
+  // Relacionamento
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Status
+  status      EntityStatus  @default(PENDING_APPROVAL)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("tourist_points")
+  @@index([city, status])
+  @@index([ownerId])
+}
+
+// ==========================================
+// RESTAURANTES
+// ==========================================
+
+model Restaurant {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  
+  // Localização
+  address     String
+  city        String
+  state       String
+  latitude    Float?
+  longitude   Float?
+  
+  // Informações básicas
+  cuisine     String?       // "Italiana", "Brasileira", etc
+  priceRange  String?       // "$", "$$", "$$$"
+  openingHours String?
+  phone       String?
+  
+  // Relacionamento
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Status
+  status      EntityStatus  @default(PENDING_APPROVAL)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("restaurants")
+  @@index([city, status])
+  @@index([ownerId])
+}
+
+// ==========================================
+// HOSPEDAGENS
+// ==========================================
+
+model Accommodation {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  
+  // Localização
+  address     String
+  city        String
+  state       String
+  latitude    Float?
+  longitude   Float?
+  
+  // Informações básicas
+  type        String?       // "Hotel", "Pousada", "Resort"
+  rooms       Int?
+  capacity    Int?
+  pricePerNight Decimal?    @db.Decimal(10, 2)
+  amenities   String?       // "Wi-Fi, Café da manhã, Piscina"
+  phone       String?
+  
+  // Relacionamento
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Status
+  status      EntityStatus  @default(PENDING_APPROVAL)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("accommodations")
+  @@index([city, status])
+  @@index([ownerId])
+}
+
+// ==========================================
+// RELATÓRIOS E SINCRONIZAÇÃO NOTION
+// ==========================================
+
+model NotionSync {
+  id          String   @id @default(uuid())
+  entityType  String   // 'REPORT' | 'TOURIST_POINT' | etc
+  entityId    String
+  notionPageId String?
+  
+  syncedAt    DateTime @default(now())
+  syncData    Json?
+  
+  @@map("notion_syncs")
+  @@unique([entityType, entityId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  title       String
+  type        String   // 'CITY_STATS' | 'ENTITY_STATS' | 'APPROVALS'
+  
+  city        String?  // Para relatórios por cidade
+  
+  data        Json     // Dados do relatório
+  generatedBy String?  // User ID
+  
+  createdAt   DateTime @default(now())
+  
+  @@map("reports")
+  @@index([city, type])
+}
